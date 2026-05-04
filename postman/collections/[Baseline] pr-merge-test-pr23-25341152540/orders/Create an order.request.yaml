@@ -1,0 +1,30 @@
+type: http
+name: Create an order
+url: '{{baseUrl}}/orders'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "sku": "ABC-123",
+      "quantity": 2
+    }
+examples:
+  - response:
+      statusCode: 201
+      statusText: Created
+      body:
+        type: json
+        content: |-
+          {
+            "id": "ord_123"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Order created

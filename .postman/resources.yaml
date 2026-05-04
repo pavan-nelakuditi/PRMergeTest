@@ -1,0 +1,20 @@
+workspace:
+  id: 335b4bdd-5a29-411d-a115-a2d1f226c0bc
+localResources:
+  collections:
+    - ../postman/collections/[Baseline] pr-merge-test-pr23-25341152540
+    - ../postman/collections/[Smoke] pr-merge-test-pr23-25341152540
+    - ../postman/collections/[Contract] pr-merge-test-pr23-25341152540
+  environments:
+    - ../postman/environments/prod.postman_environment.json
+  specs:
+    - ../openapi/dummy-openapi.yaml
+cloudResources:
+  collections:
+    ../postman/collections/[Baseline] pr-merge-test-pr23-25341152540: 50585768-75b4829f-44e4-474c-8fc1-490565d82561
+    ../postman/collections/[Smoke] pr-merge-test-pr23-25341152540: 50585768-41911085-8904-4a54-a1db-1ccff284543a
+    ../postman/collections/[Contract] pr-merge-test-pr23-25341152540: 50585768-f3b95a36-2255-4d37-9c19-48ba2f2195df
+  environments:
+    ../postman/environments/prod.postman_environment.json: 50585768-8bcd8473-a542-460b-a3ce-53048da86d65
+  specs:
+    ../openapi/dummy-openapi.yaml: ae801888-79e9-425b-8ab4-5ca7d9356e96
