@@ -49,7 +49,7 @@ jobs:
           postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           gh-fallback-token: ${{ secrets.GH_FALLBACK_TOKEN }}
-          repo-write-mode: commit-only
+          repo-write-mode: commit-and-push
           generate-ci-workflow: "false"
           environments-json: '["prod"]'
           env-runtime-urls-json: '{"prod":"https://api.example.com"}'

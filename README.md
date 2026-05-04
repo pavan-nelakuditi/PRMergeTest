@@ -63,6 +63,7 @@ If the test repository is private, the default raw GitHub URL may not be fetchab
 action because it does not attach GitHub credentials to `spec-url` requests. In that case, pass a
 public HTTPS `spec_url` when manually dispatching the workflow.
 
-The workflows use `repo-write-mode: commit-only` and `generate-ci-workflow: "false"` so generated
-Postman files are staged in the runner without pushing back to the repo. Generated `.postman/` and
-`postman/` output is uploaded as a workflow artifact when present.
+The PR #23 workflow uses `repo-write-mode: commit-and-push`, so generated Postman files are
+committed and pushed back to the workflow branch. It still uses `generate-ci-workflow: "false"` to
+avoid writing a generated CI workflow. Generated `.postman/` and `postman/` output is also uploaded
+as a workflow artifact when present.
