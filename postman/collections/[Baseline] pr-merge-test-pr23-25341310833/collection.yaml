@@ -1,0 +1,12 @@
+$schema: https://schema.postman.com/json/draft-2020-12/collection/v3.0.0/
+type: collection
+name: '[Baseline] pr-merge-test-pr23-25341310833'
+description: Minimal OpenAPI document for testing Postman onboarding action wiring.
+id: 75b4829f-44e4-474c-8fc1-490565d82561
+variables:
+  - key: baseUrl
+    value: https://api.example.com
+    type: any
+items:
+  - ref: ./health/folder.yaml
+  - ref: ./orders/folder.yaml
