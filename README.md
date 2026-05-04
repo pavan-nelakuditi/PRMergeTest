@@ -43,6 +43,13 @@ PR #23 is stacked on PR #22, so the PR #23 workflow exercises both changes toget
    - `Test onboarding with bootstrap PR 22`
    - `Test onboarding with bootstrap PR 23`
 
+The PR #23 workflow exposes the refresh behavior controls in the manual dispatch UI:
+
+- `collection_sync_mode`: `refresh` keeps tracked collection IDs current; `version` creates or
+  reuses release-scoped collections.
+- `spec_sync_mode`: `update` keeps one canonical spec current; `version` creates or reuses a
+  release-scoped spec.
+
 If `spec_url` is left blank, the workflow uses:
 
 ```text
