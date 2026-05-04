@@ -1,4 +1,0 @@
-type: folder
-name: orders
-items:
-  - ref: ./Create an order.request.yaml
