@@ -1,0 +1,8 @@
+workflows:
+  syncSpecToCollection:
+    - spec: ../openapi/dummy-openapi.yaml
+      collection: ../postman/collections/[Baseline] pr-merge-test-pr23-25342526399
+    - spec: ../openapi/dummy-openapi.yaml
+      collection: ../postman/collections/[Smoke] pr-merge-test-pr23-25342526399
+    - spec: ../openapi/dummy-openapi.yaml
+      collection: ../postman/collections/[Contract] pr-merge-test-pr23-25342526399
