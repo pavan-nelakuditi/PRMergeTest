@@ -1,0 +1,57 @@
+name: Test onboarding with bootstrap PR 23
+
+on:
+  workflow_dispatch:
+    inputs:
+      spec_url:
+        description: Optional HTTPS OpenAPI URL. Empty uses this repo's dummy spec at the current commit.
+        required: false
+        default: ""
+
+jobs:
+  onboarding:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    env:
+      DEFAULT_SPEC_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/openapi/dummy-openapi.yaml
+    steps:
+      - name: Checkout test repo
+        uses: actions/checkout@v4
+
+      - id: onboarding
+        name: Run onboarding flow
+        uses: pavan-nelakuditi/postman-api-onboarding-action@codex/bootstrap-pr23-orchestrator-test
+        with:
+          project-name: pr-merge-test-pr23-${{ github.run_id }}
+          spec-url: ${{ inputs.spec_url != '' && inputs.spec_url || env.DEFAULT_SPEC_URL }}
+          spec-path: openapi/dummy-openapi.yaml
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          gh-fallback-token: ${{ secrets.GH_FALLBACK_TOKEN }}
+          repo-write-mode: commit-only
+          generate-ci-workflow: "false"
+          environments-json: '["prod"]'
+          env-runtime-urls-json: '{"prod":"https://api.example.com"}'
+
+      - name: Print onboarding outputs
+        if: always()
+        run: |
+          echo "bootstrap-outcome=${{ steps.onboarding.outputs.bootstrap-outcome }}"
+          echo "repo-sync-outcome=${{ steps.onboarding.outputs.repo-sync-outcome }}"
+          echo "workspace-id=${{ steps.onboarding.outputs.workspace-id }}"
+          echo "spec-id=${{ steps.onboarding.outputs.spec-id }}"
+          echo "commit-sha=${{ steps.onboarding.outputs.commit-sha }}"
+          git status --short
+
+      - name: Upload generated Postman artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: postman-artifacts-bootstrap-pr23
+          path: |
+            .postman/
+            postman/
+          if-no-files-found: ignore
