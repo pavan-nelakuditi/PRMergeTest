@@ -1,0 +1,13 @@
+$schema: https://schema.postman.com/json/draft-2020-12/collection/v3.0.0/
+type: collection
+name: '[Baseline] pr-merge-test-pr27-25521488904'
+description: |
+  Workshop hero API showing reference-based customer usage for operational flows.
+id: f24316d3-4b43-4644-9887-50c31cecdfbd
+variables:
+  - key: baseUrl
+    value: http://localhost:3000
+    type: any
+items:
+  - ref: ./remote-invoices/folder.yaml
+  - ref: ./stock-transfers/folder.yaml
