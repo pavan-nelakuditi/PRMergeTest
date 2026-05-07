@@ -1,4 +1,4 @@
-name: Test API onboarding PR 20
+name: Test API onboarding PR 27
 
 on:
   workflow_dispatch:
@@ -38,9 +38,9 @@ jobs:
 
       - id: onboarding
         name: Run onboarding flow
-        uses: postman-cs/postman-api-onboarding-action@6b8b9507c785ef8c35ca621faabe6291cbd0655d
+        uses: postman-cs/postman-api-onboarding-action@5d4df22491a1f529e907733bd0eb243b36b9c2d3
         with:
-          project-name: pr-merge-test-pr20-${{ github.run_id }}
+          project-name: pr-merge-test-pr27-${{ github.run_id }}
           spec-url: ${{ inputs.spec_url != '' && inputs.spec_url || env.DEFAULT_SPEC_URL }}
           spec-path: openapi/dummy-openapi.yaml
           collection-sync-mode: ${{ inputs.collection_sync_mode }}
@@ -70,7 +70,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: postman-artifacts-api-onboarding-pr20
+          name: postman-artifacts-api-onboarding-pr27
           path: |
             .postman/
             postman/

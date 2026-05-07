@@ -14,19 +14,20 @@ uses: postman-cs/postman-bootstrap-action@main
 The PR #22 workflow checks out `postman-api-onboarding-action@main`, patches that line on the
 runner, and then runs the local patched composite.
 
-The API onboarding PR #20 workflow uses the submitted orchestrator action directly:
+The API onboarding PR #27 workflow uses the submitted orchestrator action directly:
 
 ```yaml
-uses: postman-cs/postman-api-onboarding-action@6b8b9507c785ef8c35ca621faabe6291cbd0655d
+uses: postman-cs/postman-api-onboarding-action@5d4df22491a1f529e907733bd0eb243b36b9c2d3
 ```
 
-That PR adds JUnit result generation after repo sync. It calls
-`postman-cs/postman-bootstrap-action@main`; bootstrap PR #24 was merged into `main` on May 4, 2026.
+That PR fixes the JUnit result step added after repo sync by removing the shell regex guard around the
+hardcoded Postman CLI install URL. It calls `postman-cs/postman-bootstrap-action@main`; bootstrap PR
+#24 was merged into `main` on May 4, 2026.
 
 - `test-onboarding-bootstrap-pr22.yml` uses bootstrap PR #22 at
   `43d3899c7cbc988af95a207945483562fa3fb427`.
-- `test-api-onboarding-pr20.yml` uses API onboarding PR #20 at
-  `6b8b9507c785ef8c35ca621faabe6291cbd0655d`.
+- `test-api-onboarding-pr27.yml` uses API onboarding PR #27 at
+  `5d4df22491a1f529e907733bd0eb243b36b9c2d3`.
 
 ## How to run
 
@@ -39,9 +40,9 @@ That PR adds JUnit result generation after repo sync. It calls
 3. Open the Actions tab.
 4. Run either manual workflow:
    - `Test onboarding with bootstrap PR 22`
-   - `Test API onboarding PR 20`
+   - `Test API onboarding PR 27`
 
-The API onboarding PR #20 workflow exposes the refresh behavior controls in the manual dispatch UI:
+The API onboarding PR #27 workflow exposes the refresh behavior controls in the manual dispatch UI:
 
 - `collection_sync_mode`: `refresh` keeps tracked collection IDs current; `version` creates or
   reuses release-scoped collections.
@@ -61,7 +62,8 @@ If the test repository is private, the default raw GitHub URL may not be fetchab
 action because it does not attach GitHub credentials to `spec-url` requests. In that case, pass a
 public HTTPS `spec_url` when manually dispatching the workflow.
 
-The API onboarding PR #20 workflow uses `repo-write-mode: commit-and-push`, so generated Postman files are
+The API onboarding PR #27 workflow uses `repo-write-mode: commit-and-push`, so generated Postman files are
 committed and pushed back to the workflow branch. It still uses `generate-ci-workflow: "false"` to
 avoid writing a generated CI workflow. Generated `.postman/` and `postman/` output is also uploaded
-as a workflow artifact when present. PR #20 also uploads JUnit XML as `postman-test-results`.
+as a workflow artifact when present. PR #27 keeps the JUnit XML upload as `postman-test-results` while
+using the fixed runner script.
