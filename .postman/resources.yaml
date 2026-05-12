@@ -2,18 +2,18 @@ workspace:
   id: c64c42ed-2725-4c13-a76f-52ce0e177214
 localResources:
   collections:
-    - ../postman/collections/[Baseline] pr-merge-test-pr28-25760687143
-    - ../postman/collections/[Smoke] pr-merge-test-pr28-25760687143
-    - ../postman/collections/[Contract] pr-merge-test-pr28-25760687143
+    - ../postman/collections/[Baseline] pr-merge-test-pr28-25760772238
+    - ../postman/collections/[Smoke] pr-merge-test-pr28-25760772238
+    - ../postman/collections/[Contract] pr-merge-test-pr28-25760772238
   environments:
     - ../postman/environments/prod.postman_environment.json
   specs:
     - ../openapi/dummy-openapi.yaml
 cloudResources:
   collections:
-    ../postman/collections/[Baseline] pr-merge-test-pr28-25760687143: 50585768-c6f57a33-4766-49cb-9a6d-7f548c832696
-    ../postman/collections/[Smoke] pr-merge-test-pr28-25760687143: 50585768-fdc3bbde-12ab-4697-9bd1-bf8b919bf575
-    ../postman/collections/[Contract] pr-merge-test-pr28-25760687143: 50585768-bd6214b9-2d82-4d22-a146-392c40d2dc58
+    ../postman/collections/[Baseline] pr-merge-test-pr28-25760772238: 50585768-c6f57a33-4766-49cb-9a6d-7f548c832696
+    ../postman/collections/[Smoke] pr-merge-test-pr28-25760772238: 50585768-fdc3bbde-12ab-4697-9bd1-bf8b919bf575
+    ../postman/collections/[Contract] pr-merge-test-pr28-25760772238: 50585768-bd6214b9-2d82-4d22-a146-392c40d2dc58
   environments:
     ../postman/environments/prod.postman_environment.json: 50585768-ef52fbd0-6bb3-4276-bb60-a9ceed2e975f
   specs:
