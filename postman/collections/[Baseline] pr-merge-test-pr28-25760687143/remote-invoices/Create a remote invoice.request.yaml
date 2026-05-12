@@ -1,0 +1,108 @@
+type: http
+name: Create a remote invoice
+url: '{{baseUrl}}/remote-invoices'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "storeNumber": 2861,
+      "counterNumber": 2982,
+      "customer": {
+        "customerNumber": 90001234
+      },
+      "delivery": true,
+      "items": [
+        {
+          "line": "string",
+          "item": "string",
+          "quantity": 1667,
+          "price": 2603.896543468447,
+          "corePrice": 9787.572531087551
+        }
+      ],
+      "shippingInstructions": "string",
+      "shipToName": "string",
+      "shipToAddress": "string",
+      "shipToCity": "string",
+      "shipToState": "string",
+      "poNumber": "string",
+      "freight": 1170.172673643246,
+      "serviceCharges": 2469.828004384038,
+      "stockTransfers": [
+        {
+          "transferId": "string",
+          "status": "failure",
+          "location": "string",
+          "locationCityState": "string",
+          "items": [
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 1614
+            },
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 4853
+            }
+          ]
+        },
+        {
+          "transferId": "string",
+          "status": "success",
+          "location": "string",
+          "locationCityState": "string",
+          "items": [
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 7004
+            },
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 3190
+            }
+          ]
+        }
+      ]
+    }
+examples:
+  - response:
+      statusCode: 201
+      statusText: Created
+      body:
+        type: json
+        content: |-
+          {
+            "invoiceNumber": "INV-1001",
+            "invoiceTotal": 41.98,
+            "transferResponses": [],
+            "customerValidationStatus": "skipped",
+            "notificationStatus": "skipped"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Remote invoice created
+  - response:
+      statusCode: 400
+      statusText: Bad Request
+      body:
+        type: json
+        content: |-
+          {
+            "code": "string",
+            "message": "string",
+            "correlationId": "string"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Request payload failed API boundary validation.
