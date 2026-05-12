@@ -7,6 +7,10 @@ on:
         description: Repo-root-relative local OpenAPI spec path.
         required: true
         default: openapi/dummy-openapi.yaml
+      governance_group:
+        description: Optional Postman governance group name. Empty falls back to the repo custom property when available.
+        required: false
+        default: ""
       collection_sync_mode:
         description: Collection refresh behavior.
         required: true
@@ -76,6 +80,19 @@ jobs:
           if (!source.includes('\n  spec-path:\n')) {
             throw new Error(`The checked-out onboarding action does not expose a top-level spec-path input`);
           }
+          if (!source.includes('\n  governance-group:\n')) {
+            const governanceMarker = '\n  governance-mapping-json:\n';
+            if (!source.includes(governanceMarker)) {
+              throw new Error(`Could not find governance-mapping-json input in ${actionPath}`);
+            }
+            source = source.replace(
+              governanceMarker,
+              '\n  governance-group:\n' +
+                '    description: Optional Postman governance group name. Overrides the postman-governance-group repository custom property.\n' +
+                '    required: false\n' +
+                governanceMarker
+            );
+          }
 
           const bootstrapSpecUrl = '        spec-url: $' + '{{ inputs.spec-url }}';
           const bootstrapSpecPath = '        spec-path: $' + '{{ inputs.spec-path }}';
@@ -86,13 +103,27 @@ jobs:
             source = source.replace(bootstrapSpecUrl, `${bootstrapSpecUrl}\n${bootstrapSpecPath}`);
           }
 
+          const bootstrapGovernanceMapping = '        governance-mapping-json: $' + '{{ inputs.governance-mapping-json }}';
+          const bootstrapGovernanceGroup = '        governance-group: $' + '{{ inputs.governance-group }}';
+          const bootstrapGithubToken = '        github-token: $' + '{{ inputs.github-token }}';
+          const bootstrapGhFallbackToken = '        gh-fallback-token: $' + '{{ inputs.gh-fallback-token }}';
+          if (!source.includes(`${bootstrapGovernanceMapping}\n${bootstrapGovernanceGroup}`)) {
+            if (!source.includes(bootstrapGovernanceMapping)) {
+              throw new Error(`Could not find bootstrap governance-mapping-json input in ${actionPath}`);
+            }
+            source = source.replace(
+              bootstrapGovernanceMapping,
+              `${bootstrapGovernanceMapping}\n${bootstrapGovernanceGroup}\n${bootstrapGithubToken}\n${bootstrapGhFallbackToken}`
+            );
+          }
+
           fs.writeFileSync(actionPath, source);
-          console.log(`Using ${bootstrapAfter} with spec-path passed through to bootstrap`);
+          console.log(`Using ${bootstrapAfter} with spec-path and governance inputs passed through to bootstrap`);
           NODE
 
       - name: Show patched spec-path wiring
         run: |
-          grep -nE "spec-url|spec-path|postman-bootstrap-action@" .github/actions/postman-api-onboarding-action/action.yml
+          grep -nE "spec-url|spec-path|governance-group|github-token|gh-fallback-token|postman-bootstrap-action@" .github/actions/postman-api-onboarding-action/action.yml
 
       - id: onboarding
         name: Run onboarding flow with local spec-path
@@ -101,6 +132,7 @@ jobs:
           project-name: pr-merge-test-pr34-${{ github.run_id }}
           spec-url: ""
           spec-path: ${{ inputs.spec_path }}
+          governance-group: ${{ inputs.governance_group }}
           collection-sync-mode: ${{ inputs.collection_sync_mode }}
           spec-sync-mode: ${{ inputs.spec_sync_mode }}
           postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
