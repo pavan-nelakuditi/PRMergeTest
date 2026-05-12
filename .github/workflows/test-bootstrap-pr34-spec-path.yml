@@ -3,6 +3,10 @@ name: Test bootstrap PR 34 spec-path repo sync
 on:
   workflow_dispatch:
     inputs:
+      spec_path:
+        description: Repo-root-relative local OpenAPI spec path.
+        required: true
+        default: openapi/dummy-openapi.yaml
       collection_sync_mode:
         description: Collection refresh behavior.
         required: true
@@ -33,7 +37,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify local OpenAPI spec
-        run: test -f openapi/dummy-openapi.yaml
+        run: test -f "${{ inputs.spec_path }}"
 
       - name: Checkout onboarding action
         uses: actions/checkout@v4
@@ -69,6 +73,10 @@ jobs:
             throw new Error(`Could not mark spec-url optional in ${actionPath}`);
           }
 
+          if (!source.includes('\n  spec-path:\n')) {
+            throw new Error(`The checked-out onboarding action does not expose a top-level spec-path input`);
+          }
+
           const bootstrapSpecUrl = '        spec-url: $' + '{{ inputs.spec-url }}';
           const bootstrapSpecPath = '        spec-path: $' + '{{ inputs.spec-path }}';
           if (!source.includes(bootstrapSpecPath)) {
@@ -82,13 +90,17 @@ jobs:
           console.log(`Using ${bootstrapAfter} with spec-path passed through to bootstrap`);
           NODE
 
+      - name: Show patched spec-path wiring
+        run: |
+          grep -nE "spec-url|spec-path|postman-bootstrap-action@" .github/actions/postman-api-onboarding-action/action.yml
+
       - id: onboarding
         name: Run onboarding flow with local spec-path
         uses: ./.github/actions/postman-api-onboarding-action
         with:
           project-name: pr-merge-test-pr34-${{ github.run_id }}
           spec-url: ""
-          spec-path: openapi/dummy-openapi.yaml
+          spec-path: ${{ inputs.spec_path }}
           collection-sync-mode: ${{ inputs.collection_sync_mode }}
           spec-sync-mode: ${{ inputs.spec_sync_mode }}
           postman-api-key: ${{ secrets.POSTMAN_API_KEY }}

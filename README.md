@@ -74,7 +74,7 @@ action because it does not attach GitHub credentials to `spec-url` requests. In 
 public HTTPS `spec_url` when manually dispatching the workflow.
 
 The bootstrap PR #34 workflow intentionally passes an empty `spec-url` and
-`spec-path: openapi/dummy-openapi.yaml`. It patches the checked-out onboarding action so that
+the dispatch `spec_path` value, which defaults to `openapi/dummy-openapi.yaml`. It patches the checked-out onboarding action so that
 `spec-path` is passed through to the bootstrap child action, then lets the downstream repo-sync step
 materialize `.postman/` and `postman/` outputs with `repo-write-mode: commit-and-push`.
 
