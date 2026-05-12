@@ -1,0 +1,384 @@
+type: http
+name: Create a stock transfer
+url: '{{baseUrl}}/stock-transfers'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "counterNumber": 3062,
+      "receivingStoreNumber": 1290,
+      "customer": {
+        "customerNumber": 90001234
+      },
+      "orderType": "string",
+      "itemDetails": [
+        {
+          "line": "string",
+          "item": "string",
+          "quantity": 5623
+        }
+      ],
+      "shipToName": "string",
+      "shipToAddress": "string",
+      "shipToCity": "string",
+      "shipToState": "string"
+    }
+scripts:
+  - type: afterResponse
+    code:
+      - var contract = JSON.parse("{\"method\":\"POST\",\"path\":\"/stock-transfers\",\"responses\":{\"201\":{\"content\":{\"application/json\":{\"schema\":{\"type\":\"object\",\"required\":[\"transferId\",\"status\",\"location\",\"locationCityState\",\"items\"],\"properties\":{\"transferId\":{\"type\":\"string\"},\"status\":{\"type\":\"string\",\"enum\":[\"success\",\"failure\",\"pending\"]},\"location\":{\"type\":\"string\"},\"locationCityState\":{\"type\":\"string\"},\"items\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"line\",\"item\",\"quantity\"],\"properties\":{\"line\":{\"type\":\"string\",\"minLength\":1},\"item\":{\"type\":\"string\",\"minLength\":1},\"quantity\":{\"type\":\"integer\",\"minimum\":1}}}}},\"$schema\":\"http://json-schema.org/draft-07/schema#\"}}},\"hasBody\":true,\"headers\":[]},\"400\":{\"content\":{\"application/json\":{\"schema\":{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"code\",\"message\",\"correlationId\"],\"properties\":{\"code\":{\"type\":\"string\"},\"message\":{\"type\":\"string\"},\"correlationId\":{\"type\":\"string\"}},\"$schema\":\"http://json-schema.org/draft-07/schema#\"}}},\"hasBody\":true,\"headers\":[]}}}");
+      - var validators = {};
+      - validators["201"] = validators["201"] || {};
+      - |-
+        validators["201"]["application/json"] = (function() {
+        'use strict'
+        const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+        const stringLength = (string) => /[\uD800-\uDFFF]/.test(string) ? [...string].length : string.length;
+        const pointerPart = (s) => /~\//.test(s) ? `${s}`.replace(/~/g, "~0").replace(/\//g, "~1") : s;
+        const ref0 = function validate(data) {
+          validate.errors = null
+          let errorCount = 0
+          if (!(typeof data === "object" && data && !Array.isArray(data))) {
+            if (validate.errors === null) validate.errors = []
+            validate.errors.push({ keywordLocation: "#/type", instanceLocation: "#" })
+            errorCount++
+          }
+          else {
+            if (!(data.transferId !== undefined && hasOwn(data, "transferId"))) {
+              if (validate.errors === null) validate.errors = []
+              validate.errors.push({ keywordLocation: "#/required", instanceLocation: "#/transferId" })
+              errorCount++
+            }
+            if (!(data.status !== undefined && hasOwn(data, "status"))) {
+              if (validate.errors === null) validate.errors = []
+              validate.errors.push({ keywordLocation: "#/required", instanceLocation: "#/status" })
+              errorCount++
+            }
+            if (!(data.location !== undefined && hasOwn(data, "location"))) {
+              if (validate.errors === null) validate.errors = []
+              validate.errors.push({ keywordLocation: "#/required", instanceLocation: "#/location" })
+              errorCount++
+            }
+            if (!(data.locationCityState !== undefined && hasOwn(data, "locationCityState"))) {
+              if (validate.errors === null) validate.errors = []
+              validate.errors.push({ keywordLocation: "#/required", instanceLocation: "#/locationCityState" })
+              errorCount++
+            }
+            if (!(data.items !== undefined && hasOwn(data, "items"))) {
+              if (validate.errors === null) validate.errors = []
+              validate.errors.push({ keywordLocation: "#/required", instanceLocation: "#/items" })
+              errorCount++
+            }
+            if (data.transferId !== undefined && hasOwn(data, "transferId")) {
+              if (!(typeof data.transferId === "string")) {
+                if (validate.errors === null) validate.errors = []
+                validate.errors.push({ keywordLocation: "#/properties/transferId/type", instanceLocation: "#/transferId" })
+                errorCount++
+              }
+            }
+            if (data.status !== undefined && hasOwn(data, "status")) {
+              if (!(typeof data.status === "string")) {
+                if (validate.errors === null) validate.errors = []
+                validate.errors.push({ keywordLocation: "#/properties/status/type", instanceLocation: "#/status" })
+                errorCount++
+              }
+              else {
+                if (!(data.status === "success" || data.status === "failure" || data.status === "pending")) {
+                  if (validate.errors === null) validate.errors = []
+                  validate.errors.push({ keywordLocation: "#/properties/status/enum", instanceLocation: "#/status" })
+                  errorCount++
+                }
+              }
+            }
+            if (data.location !== undefined && hasOwn(data, "location")) {
+              if (!(typeof data.location === "string")) {
+                if (validate.errors === null) validate.errors = []
+                validate.errors.push({ keywordLocation: "#/properties/location/type", instanceLocation: "#/location" })
+                errorCount++
+              }
+            }
+            if (data.locationCityState !== undefined && hasOwn(data, "locationCityState")) {
+              if (!(typeof data.locationCityState === "string")) {
+                if (validate.errors === null) validate.errors = []
+                validate.errors.push({ keywordLocation: "#/properties/locationCityState/type", instanceLocation: "#/locationCityState" })
+                errorCount++
+              }
+            }
+            if (data.items !== undefined && hasOwn(data, "items")) {
+              if (!Array.isArray(data.items)) {
+                if (validate.errors === null) validate.errors = []
+                validate.errors.push({ keywordLocation: "#/properties/items/type", instanceLocation: "#/items" })
+                errorCount++
+              }
+              else {
+                for (let i = 0; i < data.items.length; i++) {
+                  if (data.items[i] !== undefined && hasOwn(data.items, i)) {
+                    if (!(typeof data.items[i] === "object" && data.items[i] && !Array.isArray(data.items[i]))) {
+                      if (validate.errors === null) validate.errors = []
+                      validate.errors.push({ keywordLocation: "#/properties/items/items/type", instanceLocation: "#/items/"+i })
+                      errorCount++
+                    }
+                    else {
+                      if (!(data.items[i].line !== undefined && hasOwn(data.items[i], "line"))) {
+                        if (validate.errors === null) validate.errors = []
+                        validate.errors.push({ keywordLocation: "#/properties/items/items/required", instanceLocation: "#/items/"+i+"/line" })
+                        errorCount++
+                      }
+                      if (!(data.items[i].item !== undefined && hasOwn(data.items[i], "item"))) {
+                        if (validate.errors === null) validate.errors = []
+                        validate.errors.push({ keywordLocation: "#/properties/items/items/required", instanceLocation: "#/items/"+i+"/item" })
+                        errorCount++
+                      }
+                      if (!(data.items[i].quantity !== undefined && hasOwn(data.items[i], "quantity"))) {
+                        if (validate.errors === null) validate.errors = []
+                        validate.errors.push({ keywordLocation: "#/properties/items/items/required", instanceLocation: "#/items/"+i+"/quantity" })
+                        errorCount++
+                      }
+                      if (data.items[i].line !== undefined && hasOwn(data.items[i], "line")) {
+                        if (!(typeof data.items[i].line === "string")) {
+                          if (validate.errors === null) validate.errors = []
+                          validate.errors.push({ keywordLocation: "#/properties/items/items/properties/line/type", instanceLocation: "#/items/"+i+"/line" })
+                          errorCount++
+                        }
+                        else {
+                          if (data.items[i].line.length < 1 || stringLength(data.items[i].line) < 1) {
+                            if (validate.errors === null) validate.errors = []
+                            validate.errors.push({ keywordLocation: "#/properties/items/items/properties/line/minLength", instanceLocation: "#/items/"+i+"/line" })
+                            errorCount++
+                          }
+                        }
+                      }
+                      if (data.items[i].item !== undefined && hasOwn(data.items[i], "item")) {
+                        if (!(typeof data.items[i].item === "string")) {
+                          if (validate.errors === null) validate.errors = []
+                          validate.errors.push({ keywordLocation: "#/properties/items/items/properties/item/type", instanceLocation: "#/items/"+i+"/item" })
+                          errorCount++
+                        }
+                        else {
+                          if (data.items[i].item.length < 1 || stringLength(data.items[i].item) < 1) {
+                            if (validate.errors === null) validate.errors = []
+                            validate.errors.push({ keywordLocation: "#/properties/items/items/properties/item/minLength", instanceLocation: "#/items/"+i+"/item" })
+                            errorCount++
+                          }
+                        }
+                      }
+                      if (data.items[i].quantity !== undefined && hasOwn(data.items[i], "quantity")) {
+                        if (!(Number.isInteger(data.items[i].quantity))) {
+                          if (validate.errors === null) validate.errors = []
+                          validate.errors.push({ keywordLocation: "#/properties/items/items/properties/quantity/type", instanceLocation: "#/items/"+i+"/quantity" })
+                          errorCount++
+                        }
+                        else {
+                          if (!(1 <= data.items[i].quantity)) {
+                            if (validate.errors === null) validate.errors = []
+                            validate.errors.push({ keywordLocation: "#/properties/items/items/properties/quantity/minimum", instanceLocation: "#/items/"+i+"/quantity" })
+                            errorCount++
+                          }
+                        }
+                      }
+                      for (const key0 of Object.keys(data.items[i])) {
+                        if (key0 !== "line" && key0 !== "item" && key0 !== "quantity") {
+                          if (validate.errors === null) validate.errors = []
+                          validate.errors.push({ keywordLocation: "#/properties/items/items/additionalProperties", instanceLocation: "#/items/"+i+"/"+pointerPart(key0) })
+                          errorCount++
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          return errorCount === 0
+        };
+        return ref0})();;
+      - validators["400"] = validators["400"] || {};
+      - |-
+        validators["400"]["application/json"] = (function() {
+        'use strict'
+        const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+        const pointerPart = (s) => /~\//.test(s) ? `${s}`.replace(/~/g, "~0").replace(/\//g, "~1") : s;
+        const ref0 = function validate(data) {
+          validate.errors = null
+          let errorCount = 0
+          if (!(typeof data === "object" && data && !Array.isArray(data))) {
+            if (validate.errors === null) validate.errors = []
+            validate.errors.push({ keywordLocation: "#/type", instanceLocation: "#" })
+            errorCount++
+          }
+          else {
+            if (!(data.code !== undefined && hasOwn(data, "code"))) {
+              if (validate.errors === null) validate.errors = []
+              validate.errors.push({ keywordLocation: "#/required", instanceLocation: "#/code" })
+              errorCount++
+            }
+            if (!(data.message !== undefined && hasOwn(data, "message"))) {
+              if (validate.errors === null) validate.errors = []
+              validate.errors.push({ keywordLocation: "#/required", instanceLocation: "#/message" })
+              errorCount++
+            }
+            if (!(data.correlationId !== undefined && hasOwn(data, "correlationId"))) {
+              if (validate.errors === null) validate.errors = []
+              validate.errors.push({ keywordLocation: "#/required", instanceLocation: "#/correlationId" })
+              errorCount++
+            }
+            if (data.code !== undefined && hasOwn(data, "code")) {
+              if (!(typeof data.code === "string")) {
+                if (validate.errors === null) validate.errors = []
+                validate.errors.push({ keywordLocation: "#/properties/code/type", instanceLocation: "#/code" })
+                errorCount++
+              }
+            }
+            if (data.message !== undefined && hasOwn(data, "message")) {
+              if (!(typeof data.message === "string")) {
+                if (validate.errors === null) validate.errors = []
+                validate.errors.push({ keywordLocation: "#/properties/message/type", instanceLocation: "#/message" })
+                errorCount++
+              }
+            }
+            if (data.correlationId !== undefined && hasOwn(data, "correlationId")) {
+              if (!(typeof data.correlationId === "string")) {
+                if (validate.errors === null) validate.errors = []
+                validate.errors.push({ keywordLocation: "#/properties/correlationId/type", instanceLocation: "#/correlationId" })
+                errorCount++
+              }
+            }
+            for (const key0 of Object.keys(data)) {
+              if (key0 !== "code" && key0 !== "message" && key0 !== "correlationId") {
+                if (validate.errors === null) validate.errors = []
+                validate.errors.push({ keywordLocation: "#/additionalProperties", instanceLocation: "#/"+pointerPart(key0) })
+                errorCount++
+              }
+            }
+          }
+          return errorCount === 0
+        };
+        return ref0})();;
+      - function selectedResponseContract() {
+      - '  var status = String(pm.response.code);'
+      - '  if (contract.responses[status]) return { key: status, value: contract.responses[status] };'
+      - '  var range = String(Math.floor(pm.response.code / 100)) + ''XX'';'
+      - '  if (contract.responses[range]) return { key: range, value: contract.responses[range] };'
+      - '  if (contract.responses.default) return { key: ''default'', value: contract.responses.default };'
+      - '  return null;'
+      - '}'
+      - function responseText() { return pm.response.text() || ""; }
+      - function isBodyless() { return pm.response.code === 204 || pm.response.code === 205 || pm.response.code === 304 || contract.method === "HEAD"; }
+      - function mediaBase(value) { return String(value || "").toLowerCase().split(";")[0].trim(); }
+      - 'function mediaParts(value) { var base = mediaBase(value); var parts = base.split("/"); return { raw: base, type: parts[0] || "", subtype: parts[1] || "" }; }'
+      - function isJsonSubtype(subtype) { return subtype === "json" || /\+json$/.test(subtype); }
+      - function mediaScore(expected, actual) {
+      - '  var e = mediaParts(expected); var a = mediaParts(actual);'
+      - '  if (!e.raw || !a.raw) return 0;'
+      - '  if (e.raw === a.raw) return 4;'
+      - '  if (e.type === a.type && e.subtype === "json" && isJsonSubtype(a.subtype)) return 3;'
+      - '  if (e.type === a.type && e.subtype === "*+json" && /\+json$/.test(a.subtype)) return 3;'
+      - '  if (e.type === a.type && e.subtype === "*") return 2;'
+      - '  if (e.type === "*" && e.subtype === "*") return 1;'
+      - '  return 0;'
+      - '}'
+      - function selectMedia(responseContract) {
+      - '  var actual = pm.response.headers.get("Content-Type") || "";'
+      - '  var content = responseContract.content || {};'
+      - '  var matches = Object.keys(content).map(function (expected) { return { expected: expected, score: mediaScore(expected, actual), media: content[expected] }; }).filter(function (entry) { return entry.score > 0; }).sort(function (a, b) { return b.score - a.score; });'
+      - '  if (matches.length === 0) return { error: "Content-Type " + actual + " does not match OpenAPI content for " + contract.method + " " + contract.path + " status " + pm.response.code + "; expected " + Object.keys(content).join(", ") };'
+      - '  if (matches.length > 1 && matches[0].score === matches[1].score) return { error: "Content-Type " + actual + " ambiguously matches OpenAPI content for " + contract.method + " " + contract.path + " status " + pm.response.code + "; expected " + Object.keys(content).join(", ") };'
+      - '  return matches[0];'
+      - '}'
+      - var selected = selectedResponseContract();
+      - pm.test('OpenAPI operation mapping exists', function () { pm.expect(contract.path).to.be.a('string').and.not.empty; });
+      - pm.test('Status code is defined by OpenAPI', function () { pm.expect(selected, 'No OpenAPI response defined for ' + contract.method + ' ' + contract.path + ' status ' + pm.response.code).to.exist; });
+      - pm.test('Response headers match OpenAPI', function () {
+      - '  if (!selected) return;'
+      - '  var headers = selected.value.headers || [];'
+      - '  headers.forEach(function (header) {'
+      - '    var actual = pm.response.headers.get(header.name);'
+      - '    if (!actual && header.required) pm.expect.fail("OpenAPI response header missing for " + contract.method + " " + contract.path + ": " + header.name);'
+      - '    if (!actual) return;'
+      - '    if (header.unsupported) pm.expect.fail("OpenAPI response header unsupported for " + contract.method + " " + contract.path + ": " + header.unsupported);'
+      - '    var headerValidator = validators[selected.key] && validators[selected.key].__headers && validators[selected.key].__headers[String(header.name).toLowerCase()];'
+      - '    if (headerValidator && !headerValidator(actual)) pm.expect.fail("OpenAPI response header validation failed for " + header.name + ": " + JSON.stringify(headerValidator.errors || []));'
+      - '  });'
+      - '});'
+      - pm.test('Response body matches OpenAPI body contract', function () {
+      - '  if (!selected) return;'
+      - '  if (isBodyless()) { pm.expect(responseText().trim().length).to.equal(0); return; }'
+      - '  var content = selected.value.content || {};'
+      - '  if (Object.keys(content).length === 0) { pm.expect(responseText().trim().length, "OpenAPI response defines no body but response body was not empty").to.equal(0); }'
+      - '  else { pm.expect(responseText().trim().length, "OpenAPI response defines a body but response body was empty").to.be.above(0); }'
+      - '});'
+      - pm.test('Content-Type matches OpenAPI response content', function () {
+      - '  if (!selected || isBodyless()) return;'
+      - '  var content = selected.value.content || {};'
+      - '  if (Object.keys(content).length === 0) return;'
+      - '  var actual = pm.response.headers.get("Content-Type");'
+      - '  if (!actual) pm.expect.fail("Content-Type <missing> does not match OpenAPI content for " + contract.method + " " + contract.path + " status " + pm.response.code + "; expected " + Object.keys(content).join(", "));'
+      - '  var media = selectMedia(selected.value);'
+      - '  if (media.error) pm.expect.fail(media.error);'
+      - '});'
+      - pm.test('Response body matches OpenAPI schema', function () {
+      - '  if (!selected || isBodyless()) return;'
+      - '  var content = selected.value.content || {};'
+      - '  if (Object.keys(content).length === 0) return;'
+      - '  var media = selectMedia(selected.value);'
+      - '  if (media.error) return;'
+      - '  if (media.media.unsupported) pm.expect.fail("OpenAPI schema unsupported for " + contract.method + " " + contract.path + " status " + pm.response.code + ": " + media.media.unsupported);'
+      - '  if (!media.media.schema) { return; }'
+      - '  var validate = validators[selected.key] && validators[selected.key][media.expected];'
+      - '  if (!validate) pm.expect.fail("OpenAPI schema validator was not generated for " + media.expected);'
+      - '  var actual = mediaParts(pm.response.headers.get("Content-Type") || "");'
+      - '  var value = isJsonSubtype(actual.subtype) ? pm.response.json() : responseText();'
+      - '  if (!isJsonSubtype(actual.subtype) && media.media.schema && media.media.schema.type !== "string") pm.expect.fail("Non-JSON response schema validation unsupported for " + contract.method + " " + contract.path);'
+      - '  if (!validate(value)) pm.expect.fail("OpenAPI schema validation failed for " + contract.method + " " + contract.path + " status " + pm.response.code + ": " + JSON.stringify(validate.errors || []));'
+      - '});'
+    language: text/javascript
+examples:
+  - response:
+      statusCode: 201
+      statusText: Created
+      body:
+        type: json
+        content: |-
+          {
+            "transferId": "string",
+            "status": "pending",
+            "location": "string",
+            "locationCityState": "string",
+            "items": [
+              {
+                "line": "string",
+                "item": "string",
+                "quantity": 4267
+              },
+              {
+                "line": "string",
+                "item": "string",
+                "quantity": 4540
+              }
+            ]
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Stock transfer created
+  - response:
+      statusCode: 400
+      statusText: Bad Request
+      body:
+        type: json
+        content: |-
+          {
+            "code": "string",
+            "message": "string",
+            "correlationId": "string"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Request payload failed API boundary validation.
