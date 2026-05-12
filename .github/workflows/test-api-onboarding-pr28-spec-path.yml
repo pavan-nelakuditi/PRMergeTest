@@ -1,0 +1,118 @@
+name: Test API onboarding PR 28 spec-path
+
+on:
+  workflow_dispatch:
+    inputs:
+      spec_path:
+        description: Repo-root-relative local OpenAPI spec path.
+        required: true
+        default: openapi/dummy-openapi.yaml
+      collection_sync_mode:
+        description: Collection refresh behavior.
+        required: true
+        default: refresh
+        type: choice
+        options:
+          - refresh
+          - version
+      spec_sync_mode:
+        description: Spec refresh behavior.
+        required: true
+        default: update
+        type: choice
+        options:
+          - update
+          - version
+
+jobs:
+  onboarding:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    env:
+      ONBOARDING_REF: aea7be4b01bd3099bbbfd183580205d48c12cd80
+    steps:
+      - name: Checkout test repo
+        uses: actions/checkout@v4
+
+      - name: Verify local OpenAPI spec
+        run: test -f "${{ inputs.spec_path }}"
+
+      - name: Checkout onboarding PR 28
+        uses: actions/checkout@v4
+        with:
+          repository: postman-cs/postman-api-onboarding-action
+          ref: ${{ env.ONBOARDING_REF }}
+          path: .github/actions/postman-api-onboarding-action
+
+      - name: Exclude local action checkout from repo sync commits
+        run: echo ".github/actions/postman-api-onboarding-action/" >> .git/info/exclude
+
+      - name: Verify onboarding PR 28 spec-path wiring
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const actionPath = '.github/actions/postman-api-onboarding-action/action.yml';
+          let source = fs.readFileSync(actionPath, 'utf8');
+
+          const bootstrapRef = 'postman-cs/postman-bootstrap-action@main';
+          if (!source.includes(bootstrapRef)) {
+            throw new Error(`Could not find ${bootstrapRef} in ${actionPath}`);
+          }
+
+          const bootstrapSpecUrl = '        spec-url: $' + '{{ inputs.spec-url }}';
+          const bootstrapSpecPath = '        spec-path: $' + "{{ inputs.spec-url == '' && inputs.spec-path || '' }}";
+          if (!source.includes(bootstrapSpecUrl) || !source.includes(bootstrapSpecPath)) {
+            throw new Error(`PR 28 does not appear to pass spec-path to bootstrap as expected`);
+          }
+
+          console.log(`Using onboarding ${process.env.ONBOARDING_REF}`);
+          console.log(`Using bootstrap ${bootstrapRef}`);
+          NODE
+
+      - name: Show patched spec-path wiring
+        run: |
+          grep -nE "spec-url|spec-path|postman-bootstrap-action@" .github/actions/postman-api-onboarding-action/action.yml
+
+      - id: onboarding
+        name: Run onboarding PR 28 with local spec-path
+        uses: ./.github/actions/postman-api-onboarding-action
+        with:
+          project-name: pr-merge-test-pr28-${{ github.run_id }}
+          spec-url: ""
+          spec-path: ${{ inputs.spec_path }}
+          collection-sync-mode: ${{ inputs.collection_sync_mode }}
+          spec-sync-mode: ${{ inputs.spec_sync_mode }}
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          gh-fallback-token: ${{ secrets.GH_FALLBACK_TOKEN }}
+          repo-write-mode: commit-and-push
+          generate-ci-workflow: "false"
+          environments-json: '["prod"]'
+          env-runtime-urls-json: '{"prod":"https://api.example.com"}'
+
+      - name: Print onboarding outputs
+        if: always()
+        run: |
+          echo "bootstrap-outcome=${{ steps.onboarding.outputs.bootstrap-outcome }}"
+          echo "repo-sync-outcome=${{ steps.onboarding.outputs.repo-sync-outcome }}"
+          echo "workspace-id=${{ steps.onboarding.outputs.workspace-id }}"
+          echo "workspace-url=${{ steps.onboarding.outputs.workspace-url }}"
+          echo "spec-id=${{ steps.onboarding.outputs.spec-id }}"
+          echo "commit-sha=${{ steps.onboarding.outputs.commit-sha }}"
+          echo "repo-sync-summary-json=${{ steps.onboarding.outputs.repo-sync-summary-json }}"
+          echo "collection-sync-mode=${{ inputs.collection_sync_mode }}"
+          echo "spec-sync-mode=${{ inputs.spec_sync_mode }}"
+          git status --short
+
+      - name: Upload generated Postman artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: postman-artifacts-api-onboarding-pr28-spec-path
+          path: |
+            .postman/
+            postman/
+          if-no-files-found: ignore

@@ -32,10 +32,19 @@ file:
 uses: postman-cs/postman-bootstrap-action@3d44b113c1599b2b9f3ceac5ff10be72f2ca64ed
 ```
 
+The API onboarding PR #28 workflow checks out the submitted orchestrator action and verifies its
+`spec-path` passthrough behavior:
+
+```yaml
+uses: postman-cs/postman-api-onboarding-action@aea7be4b01bd3099bbbfd183580205d48c12cd80
+```
+
 - `test-onboarding-bootstrap-pr22.yml` uses bootstrap PR #22 at
   `43d3899c7cbc988af95a207945483562fa3fb427`.
 - `test-api-onboarding-pr27.yml` uses API onboarding PR #27 at
   `5d4df22491a1f529e907733bd0eb243b36b9c2d3`.
+- `test-api-onboarding-pr28-spec-path.yml` uses API onboarding PR #28 at
+  `aea7be4b01bd3099bbbfd183580205d48c12cd80`.
 - `test-bootstrap-pr34-spec-path.yml` uses bootstrap PR #34 at
   `3d44b113c1599b2b9f3ceac5ff10be72f2ca64ed`.
 
@@ -51,6 +60,7 @@ uses: postman-cs/postman-bootstrap-action@3d44b113c1599b2b9f3ceac5ff10be72f2ca64
 4. Run either manual workflow:
    - `Test onboarding with bootstrap PR 22`
    - `Test API onboarding PR 27`
+   - `Test API onboarding PR 28 spec-path`
    - `Test bootstrap PR 34 spec-path repo sync`
 
 The API onboarding PR #27 workflow exposes the refresh behavior controls in the manual dispatch UI:
@@ -77,6 +87,10 @@ The bootstrap PR #34 workflow intentionally passes an empty `spec-url` and
 the dispatch `spec_path` value, which defaults to `openapi/dummy-openapi.yaml`. It patches the checked-out onboarding action so that
 `spec-path` is passed through to the bootstrap child action, then lets the downstream repo-sync step
 materialize `.postman/` and `postman/` outputs with `repo-write-mode: commit-and-push`.
+
+The API onboarding PR #28 workflow uses the submitted onboarding PR as the orchestrator, passes an
+empty `spec-url` plus the dispatch `spec_path` value, and verifies that the PR's bootstrap child
+reference uses `postman-cs/postman-bootstrap-action@main`, which now includes local spec loading.
 
 The API onboarding PR #27 workflow uses `repo-write-mode: commit-and-push`, so generated Postman files are
 committed and pushed back to the workflow branch. It still uses `generate-ci-workflow: "false"` to
