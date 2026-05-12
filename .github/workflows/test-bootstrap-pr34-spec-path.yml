@@ -79,7 +79,7 @@ jobs:
 
           const bootstrapSpecUrl = '        spec-url: $' + '{{ inputs.spec-url }}';
           const bootstrapSpecPath = '        spec-path: $' + '{{ inputs.spec-path }}';
-          if (!source.includes(bootstrapSpecPath)) {
+          if (!source.includes(`${bootstrapSpecUrl}\n${bootstrapSpecPath}`)) {
             if (!source.includes(bootstrapSpecUrl)) {
               throw new Error(`Could not find bootstrap spec-url input in ${actionPath}`);
             }
