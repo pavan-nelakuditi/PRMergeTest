@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Account Contract Match Regression API
+  version: 1.0.0
+  description: Minimal spec for validating server-template contract matching.
+servers:
+  - url: https://api.example.com/{basePath}
+    variables:
+      basePath:
+        default: account
+paths:
+  /login:
+    post:
+      operationId: login
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+  /otp/login:
+    post:
+      operationId: otpLogin
+      summary: OTP login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OtpLoginRequest"
+      responses:
+        "200":
+          description: OTP login accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: fox.user@example.com
+        password:
+          type: string
+          example: passw0rd
+    OtpLoginRequest:
+      type: object
+      required:
+        - username
+        - otp
+      properties:
+        username:
+          type: string
+          example: fox.user@example.com
+        otp:
+          type: string
+          example: "123456"
+    LoginResponse:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+          example: test-token

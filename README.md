@@ -39,6 +39,13 @@ The API onboarding PR #28 workflow checks out the submitted orchestrator action 
 uses: postman-cs/postman-api-onboarding-action@aea7be4b01bd3099bbbfd183580205d48c12cd80
 ```
 
+The bootstrap PR #35 workflow checks out `postman-api-onboarding-action@main`, patches its bootstrap
+child action to the submitted PR, and runs a focused server-template contract-match regression spec:
+
+```yaml
+uses: postman-cs/postman-bootstrap-action@b4faaeaaf902630627a321313a17d694db3af943
+```
+
 - `test-onboarding-bootstrap-pr22.yml` uses bootstrap PR #22 at
   `43d3899c7cbc988af95a207945483562fa3fb427`.
 - `test-api-onboarding-pr27.yml` uses API onboarding PR #27 at
@@ -47,6 +54,8 @@ uses: postman-cs/postman-api-onboarding-action@aea7be4b01bd3099bbbfd183580205d48
   `aea7be4b01bd3099bbbfd183580205d48c12cd80`.
 - `test-bootstrap-pr34-spec-path.yml` uses bootstrap PR #34 at
   `3d44b113c1599b2b9f3ceac5ff10be72f2ca64ed`.
+- `test-bootstrap-pr35-contract-match.yml` uses bootstrap PR #35 at
+  `b4faaeaaf902630627a321313a17d694db3af943`.
 
 ## How to run
 
@@ -62,6 +71,7 @@ uses: postman-cs/postman-api-onboarding-action@aea7be4b01bd3099bbbfd183580205d48
    - `Test API onboarding PR 27`
    - `Test API onboarding PR 28 spec-path`
    - `Test bootstrap PR 34 spec-path repo sync`
+   - `Test bootstrap PR 35 contract match`
 
 The API onboarding PR #27 workflow exposes the refresh behavior controls in the manual dispatch UI:
 
@@ -91,6 +101,10 @@ materialize `.postman/` and `postman/` outputs with `repo-write-mode: commit-and
 The API onboarding PR #28 workflow uses the submitted onboarding PR as the orchestrator, passes an
 empty `spec-url` plus the dispatch `spec_path` value, and verifies that the PR's bootstrap child
 reference uses `postman-cs/postman-bootstrap-action@main`, which now includes local spec loading.
+
+The bootstrap PR #35 workflow uses `openapi/contract-match-server-template.yaml`, which includes a
+server `{basePath}` plus both `/login` and `/otp/login`. That covers the regression where
+`/{serverVariable}/login` incorrectly outranked the literal `/otp/login` contract candidate.
 
 The API onboarding PR #27 workflow uses `repo-write-mode: commit-and-push`, so generated Postman files are
 committed and pushed back to the workflow branch. It still uses `generate-ci-workflow: "false"` to

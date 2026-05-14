@@ -1,0 +1,121 @@
+name: Test bootstrap PR 35 contract match
+
+on:
+  workflow_dispatch:
+    inputs:
+      spec_path:
+        description: Repo-root-relative OpenAPI spec path for the contract-match regression.
+        required: true
+        default: openapi/contract-match-server-template.yaml
+      collection_sync_mode:
+        description: Collection refresh behavior.
+        required: true
+        default: refresh
+        type: choice
+        options:
+          - refresh
+          - version
+      spec_sync_mode:
+        description: Spec refresh behavior.
+        required: true
+        default: update
+        type: choice
+        options:
+          - update
+          - version
+
+jobs:
+  onboarding:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    env:
+      BOOTSTRAP_REF: b4faaeaaf902630627a321313a17d694db3af943
+    steps:
+      - name: Checkout test repo
+        uses: actions/checkout@v4
+
+      - name: Verify local OpenAPI spec
+        run: test -f "${{ inputs.spec_path }}"
+
+      - name: Checkout onboarding action
+        uses: actions/checkout@v4
+        with:
+          repository: postman-cs/postman-api-onboarding-action
+          ref: main
+          path: .github/actions/postman-api-onboarding-action
+
+      - name: Exclude local action checkout from repo sync commits
+        run: echo ".github/actions/postman-api-onboarding-action/" >> .git/info/exclude
+
+      - name: Point onboarding at bootstrap PR 35
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const actionPath = '.github/actions/postman-api-onboarding-action/action.yml';
+          const bootstrapRef = process.env.BOOTSTRAP_REF;
+          let source = fs.readFileSync(actionPath, 'utf8');
+
+          const bootstrapBefore = 'postman-cs/postman-bootstrap-action@main';
+          const bootstrapAfter = `postman-cs/postman-bootstrap-action@${bootstrapRef}`;
+          if (!source.includes(bootstrapBefore)) {
+            throw new Error(`Could not find ${bootstrapBefore} in ${actionPath}`);
+          }
+          source = source.replace(bootstrapBefore, bootstrapAfter);
+
+          const bootstrapSpecUrl = '        spec-url: $' + '{{ inputs.spec-url }}';
+          const bootstrapSpecPath = '        spec-path: $' + "{{ inputs.spec-url == '' && inputs.spec-path || '' }}";
+          if (!source.includes(bootstrapSpecUrl) || !source.includes(bootstrapSpecPath)) {
+            throw new Error(`The checked-out onboarding action does not pass spec-path to bootstrap as expected`);
+          }
+
+          fs.writeFileSync(actionPath, source);
+          console.log(`Using ${bootstrapAfter} for contract-match regression coverage`);
+          NODE
+
+      - name: Show patched bootstrap wiring
+        run: |
+          grep -nE "spec-url|spec-path|postman-bootstrap-action@" .github/actions/postman-api-onboarding-action/action.yml
+
+      - id: onboarding
+        name: Run onboarding flow with bootstrap PR 35
+        uses: ./.github/actions/postman-api-onboarding-action
+        with:
+          project-name: pr-merge-test-pr35-${{ github.run_id }}
+          spec-url: ""
+          spec-path: ${{ inputs.spec_path }}
+          collection-sync-mode: ${{ inputs.collection_sync_mode }}
+          spec-sync-mode: ${{ inputs.spec_sync_mode }}
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          gh-fallback-token: ${{ secrets.GH_FALLBACK_TOKEN }}
+          repo-write-mode: commit-and-push
+          generate-ci-workflow: "false"
+          environments-json: '["prod"]'
+          env-runtime-urls-json: '{"prod":"https://api.example.com"}'
+
+      - name: Print onboarding outputs
+        if: always()
+        run: |
+          echo "bootstrap-outcome=${{ steps.onboarding.outputs.bootstrap-outcome }}"
+          echo "repo-sync-outcome=${{ steps.onboarding.outputs.repo-sync-outcome }}"
+          echo "workspace-id=${{ steps.onboarding.outputs.workspace-id }}"
+          echo "workspace-url=${{ steps.onboarding.outputs.workspace-url }}"
+          echo "spec-id=${{ steps.onboarding.outputs.spec-id }}"
+          echo "commit-sha=${{ steps.onboarding.outputs.commit-sha }}"
+          echo "repo-sync-summary-json=${{ steps.onboarding.outputs.repo-sync-summary-json }}"
+          echo "collection-sync-mode=${{ inputs.collection_sync_mode }}"
+          echo "spec-sync-mode=${{ inputs.spec_sync_mode }}"
+          git status --short
+
+      - name: Upload generated Postman artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: postman-artifacts-bootstrap-pr35-contract-match
+          path: |
+            .postman/
+            postman/
+          if-no-files-found: ignore
