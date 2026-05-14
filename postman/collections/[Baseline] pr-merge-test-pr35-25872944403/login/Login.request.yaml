@@ -1,0 +1,30 @@
+type: http
+name: Login
+url: '{{baseUrl}}/login'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "fox.user@example.com",
+      "password": "passw0rd"
+    }
+examples:
+  - response:
+      statusCode: 200
+      statusText: OK
+      body:
+        type: json
+        content: |-
+          {
+            "token": "test-token"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Login accepted

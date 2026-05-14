@@ -1,0 +1,15 @@
+$schema: https://schema.postman.com/json/draft-2020-12/collection/v3.0.0/
+type: collection
+name: '[Baseline] pr-merge-test-pr35-25872944403'
+description: Minimal spec for validating server-template contract matching.
+id: 39e48292-4637-4ba5-adac-580c968679ec
+variables:
+  - key: basePath
+    value: account
+    type: any
+  - key: baseUrl
+    value: https://api.example.com/{{basePath}}
+    type: any
+items:
+  - ref: ./login/folder.yaml
+  - ref: ./otp/folder.yaml
